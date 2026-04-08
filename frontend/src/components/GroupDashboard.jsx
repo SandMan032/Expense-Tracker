@@ -100,9 +100,14 @@ function ExpensesList({ expenses }) {
               className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0"
             >
               <div className="flex items-center justify-between gap-4">
-                <span className="text-base font-semibold text-slate-900">
-                  {formatCurrency(expense.amount)}
-                </span>
+                <div className="space-y-1">
+                  <p className="text-base font-semibold text-slate-900">
+                    {expense.title || 'Untitled expense'}
+                  </p>
+                  <span className="text-sm font-medium text-amber-700">
+                    {formatCurrency(expense.amount)}
+                  </span>
+                </div>
                 <span className="text-sm text-slate-500">
                   Paid by {expense.paidBy}
                 </span>

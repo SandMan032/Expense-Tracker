@@ -6,6 +6,11 @@ const expenseSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Group',
     },
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     amount: {
       type: Number,
       required: true,

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ReceiptIcon } from './Icons.jsx';
 
 function AddExpenseCard({ group, onExpenseAdded }) {
+  const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [paidBy, setPaidBy] = useState('');
   const [participants, setParticipants] = useState([]);
@@ -14,6 +15,7 @@ function AddExpenseCard({ group, onExpenseAdded }) {
   const members = group?.members ?? [];
 
   useEffect(() => {
+    setTitle('');
     setAmount('');
     setPaidBy('');
     setParticipants([]);
@@ -38,7 +40,12 @@ function AddExpenseCard({ group, onExpenseAdded }) {
 
   const validateForm = () => {
     const nextErrors = {};
+    const normalizedTitle = title.trim();
     const numericAmount = Number(amount);
+
+    if (!normalizedTitle) {
+      nextErrors.title = 'Enter a title for this expense.';
+    }
 
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
       nextErrors.amount = 'Enter an amount greater than 0.';
@@ -60,6 +67,7 @@ function AddExpenseCard({ group, onExpenseAdded }) {
   };
 
   const resetForm = () => {
+    setTitle('');
     setAmount('');
     setPaidBy('');
     setParticipants([]);
@@ -113,6 +121,7 @@ function AddExpenseCard({ group, onExpenseAdded }) {
     try {
       const formData = new FormData();
       formData.append('groupId', group._id);
+      formData.append('title', title.trim());
       formData.append('amount', amount);
       formData.append('paidBy', paidBy);
       formData.append('participants', JSON.stringify(participants));
@@ -160,6 +169,26 @@ function AddExpenseCard({ group, onExpenseAdded }) {
       </div>
 
       <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-2">
+          <label
+            className="text-sm font-medium text-slate-700"
+            htmlFor="expense-title"
+          >
+            Expense title
+          </label>
+          <input
+            id="expense-title"
+            type="text"
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+            placeholder="Dinner at the cafe"
+            className="rounded-lg border border-slate-200 px-4 py-3 text-slate-900 outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-100"
+          />
+          {errors.title ? (
+            <p className="text-sm text-rose-600">{errors.title}</p>
+          ) : null}
+        </div>
+
         <div className="flex flex-col gap-2">
           <label
             className="text-sm font-medium text-slate-700"

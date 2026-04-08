@@ -48,12 +48,17 @@ const normalizeParticipants = (participants) => {
 
 const createExpense = async (req, res) => {
   try {
-    const { groupId, amount, paidBy, participants } = req.body;
+    const { groupId, title, amount, paidBy, participants } = req.body;
     const billImage = req.file ? req.file.path.replace(/\\/g, '/') : undefined;
 
     if (!mongoose.Types.ObjectId.isValid(groupId)) {
       await removeUploadedFile(billImage);
       return res.status(400).json({ message: 'Invalid group ID' });
+    }
+
+    if (!title || !title.trim()) {
+      await removeUploadedFile(billImage);
+      return res.status(400).json({ message: 'Title is required' });
     }
 
     const numericAmount = Number(amount);
@@ -118,6 +123,7 @@ const createExpense = async (req, res) => {
 
     const expense = await Expense.create({
       groupId,
+      title: title.trim(),
       amount: numericAmount,
       paidBy: normalizedPaidBy,
       participants: normalizedParticipants,
